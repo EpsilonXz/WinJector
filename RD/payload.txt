@@ -1,6 +1,6 @@
-REM TITLE Example
-REM AUTHOR Hak5
-REM Example Modifier Key Combo Keystroke Injection for Windows
+REM WinJector
+REM Author EpsilonXz
+REM ****************
 DELAY 5000
 GUI q
 DELAY 500
